@@ -1,0 +1,255 @@
+/* Sun and Moon Animation */
+.sky-container {
+  height: 400px;
+  width: 100%;
+  background: linear-gradient(#3f006c, #750050, #b10042, #da4837, #f7bb38);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 20px;
+  animation: colors 12s infinite forwards;
+}
+
+@keyframes colors {
+  10% {
+    background: linear-gradient(#3f006c, #750050, #b10042, #da4837, #f7bb38);
+  }
+  53% {
+    background: linear-gradient(#14045f, #331a99, #282bce, #1555ec, #1e84f7);
+  }
+  55% {
+    background: linear-gradient(#14045f, #331a99, #282bce, #1555ec, #1e84f7);
+  }
+  98% {
+    background: linear-gradient(#3f006c, #750050, #b10042, #da4837, #f7bb38);
+  }
+  100% {
+    background: linear-gradient(#3f006c, #750050, #b10042, #da4837, #f7bb38);
+  }
+}
+
+.celestial-orbit {
+  height: 600px;
+  width: 600px;
+  border-radius: 50%;
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 12s infinite forwards;
+}
+
+@keyframes spin {
+  10% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  45% {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+  55% {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+  90% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.sun {
+  background-color: #f7f7de;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: -30px;
+  transform: translateX(-50%);
+}
+
+.sun:before,
+.sun:after {
+  position: absolute;
+  content: "";
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.sun:before {
+  height: 120px;
+  width: 120px;
+  top: -30px;
+  left: -30px;
+}
+
+.sun:after {
+  height: 200px;
+  width: 200px;
+  top: -70px;
+  left: -70px;
+}
+
+.ray1,
+.ray2,
+.ray3,
+.ray4 {
+  position: absolute;
+  height: 0;
+  border-style: solid;
+  border-color: transparent transparent rgba(255, 255, 255, 0.1) transparent;
+}
+
+.ray1 {
+  width: 10px;
+  border-width: 0 30px 170px 30px;
+  transform: rotate(130deg);
+  bottom: 10px;
+  right: 64px;
+}
+
+.ray2 {
+  width: 15px;
+  border-width: 0 35px 200px 35px;
+  transform: rotate(230deg);
+  left: 60px;
+  bottom: -5px;
+}
+
+.ray3 {
+  width: 5px;
+  border-width: 0 15px 200px 15px;
+  transform: rotate(80deg);
+  left: -85px;
+  bottom: -90px;
+}
+
+.ray4 {
+  width: 2px;
+  border-width: 0 8px 200px 8px;
+  transform: rotate(280deg);
+  left: 120px;
+  bottom: -90px;
+}
+
+.moon {
+  height: 60px;
+  width: 60px;
+  box-shadow: 20px -20px 0 0 #f7f7de;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.moon:before,
+.moon:after {
+  position: absolute;
+  content: "";
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.moon:before {
+  height: 100px;
+  width: 100px;
+  right: -40px;
+  bottom: 0;
+}
+
+.moon:after {
+  height: 190px;
+  width: 190px;
+  left: -45px;
+  bottom: -45px;
+}
+
+.stars {
+  height: 2px;
+  width: 2px;
+  background-color: #ffffff;
+  position: absolute;
+  top: 60px;
+  left: 150px;
+  border-radius: 50%;
+  box-shadow: 
+    48px 149px #ffffff, 
+    -29px 179px #ffffff, 
+    40px 259px #ffffff,
+    -80px 99px #ffffff, 
+    -90px -10px #ffffff, 
+    -90px 59px 0 1px #ffffff,
+    -80px 280px 0 0.8px #ffffff, 
+    -120px 229px #ffffff,
+    200px 80px #ffffff,
+    250px 150px #ffffff,
+    180px 200px #ffffff,
+    300px 120px #ffffff;
+  animation: twinkle 12s infinite forwards;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0;
+  }
+  53% {
+    opacity: 0.7;
+  }
+  55% {
+    opacity: 0.7;
+  }
+  98% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.glow {
+  height: 350px;
+  width: 350px;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  bottom: -304px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: float 5s infinite;
+}
+
+@keyframes float {
+  50% {
+    transform: translateX(-50%) translateY(12px);
+  }
+}
+
+.glow:before,
+.glow:after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  background-color: inherit;
+  border-radius: 50%;
+}
+
+.glow:before {
+  left: -149px;
+  top: -50px;
+}
+
+.glow:after {
+  right: -90px;
+  top: -13px;
+}
+
+@media screen and (min-width: 600px) {
+  .sky-container {
+    font-size: 20px;
+  }
+}

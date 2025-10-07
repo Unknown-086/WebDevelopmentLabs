@@ -1,0 +1,102 @@
+/* Bouncing Ball Animation */
+.ball-container {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  border-bottom: 3px solid var(--dark-blue);
+}
+
+.ball {
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle at 30% 30%, var(--red), #c42020);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation: ball-bounce 6s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+             ball-move 6s linear infinite;
+}
+
+@keyframes ball-move {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: calc(100% - 50px);
+  }
+}
+
+@keyframes ball-bounce {
+  0% {
+    top: 0;
+    animation-timing-function: ease-in;
+  }
+  5% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    top: 50px;
+    animation-timing-function: ease-in;
+  }
+  15% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  20% {
+    top: 90px;
+    animation-timing-function: ease-in;
+  }
+  25% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  30% {
+    top: 120px;
+    animation-timing-function: ease-in;
+  }
+  35% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  40% {
+    top: 140px;
+    animation-timing-function: ease-in;
+  }
+  45% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    top: 160px;
+    animation-timing-function: ease-in;
+  }
+  55% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  60% {
+    top: 175px;
+    animation-timing-function: ease-in;
+  }
+  65% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  70% {
+    top: 185px;
+    animation-timing-function: ease-in;
+  }
+  75% {
+    top: 200px;
+    animation-timing-function: ease-out;
+  }
+  80% {
+    top: 195px;
+    animation-timing-function: ease-in;
+  }
+  85%, 100% {
+    top: 200px;
+  }
+}
