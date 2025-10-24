@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <div class="month-display">
+                <h2 id="month-year"></h2>
+            </div>
+            <div class="calendar-nav">
+                <button id="pakistan-holidays-btn"><i class="fas fa-flag"></i> Holidays</button>
+                <button id="view-toggle"><i class="fas fa-calendar-week"></i> Weekly View</button>
+                <button id="today-btn"><i class="fas fa-calendar-day"></i> Today</button>
+                <div class="nav-buttons">
+                    <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calendar-body">
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+    </div>
+
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-calendar-plus"></i> <span id="modal-title">Add Event</span> <span class="close">&times;</span></h3>
+            <p id="selected-date"></p>
+            <form id="event-form">
+                <div class="form-group">
+                    <label for="event-name"><i class="fas fa-tag"></i> Event Name:</label>
+                    <input type="text" id="event-name" placeholder="Enter event name..." required>
+                </div>
+                <div class="form-group">
+                    <label for="event-time"><i class="fas fa-clock"></i> Time:</label>
+                    <input type="time" id="event-time">
+                </div>
+                <div class="form-group">
+                    <label for="event-category"><i class="fas fa-folder"></i> Category:</label>
+                    <select id="event-category" style="width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 14px; background-color: #f8f9fa; cursor: pointer;">
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="important">Important</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="health">Health</option>
+                        <option value="social">Social</option>
+                        <option value="custom">Custom...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-category-group" style="display: none;">
+                    <label for="custom-category"><i class="fas fa-tag"></i> Custom Category Name:</label>
+                    <input type="text" id="custom-category" placeholder="Enter custom category..." style="width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 14px; background-color: #f8f9fa;">
+                </div>
+                <div class="form-group">
+                    <label for="event-color"><i class="fas fa-palette"></i> Color:</label>
+                    <input type="color" id="event-color" value="#667eea" style="width: 100%; height: 50px; padding: 5px; border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer; background-color: #f8f9fa;">
+                </div>
+                <div class="form-group">
+                    <label for="event-description"><i class="fas fa-align-left"></i> Description:</label>
+                    <textarea id="event-description" placeholder="Add event description (optional)..." style="width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 14px; background-color: #f8f9fa; resize: vertical; min-height: 80px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"></textarea>
+                </div>
+                <input type="hidden" id="event-id">
+                <button type="submit" id="save-event"><i class="fas fa-save"></i> Save Event</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="event-details-modal" class="event-details-modal">
+        <div class="event-details-content">
+            <div class="event-details-header">
+                <h3><i class="fas fa-calendar-check"></i> Event Details</h3>
+                <span class="close" id="close-details">&times;</span>
+            </div>
+            <div class="event-details-body">
+                <div class="event-detail-item">
+                    <div class="event-detail-label"><i class="fas fa-tag"></i> Event Name</div>
+                    <div class="event-detail-value" id="detail-name"></div>
+                </div>
+                <div class="event-detail-item">
+                    <div class="event-detail-label"><i class="fas fa-calendar-day"></i> Date</div>
+                    <div class="event-detail-value" id="detail-date"></div>
+                </div>
+                <div class="event-detail-item">
+                    <div class="event-detail-label"><i class="fas fa-clock"></i> Time</div>
+                    <div class="event-detail-value" id="detail-time"></div>
+                </div>
+                <div class="event-detail-item">
+                    <div class="event-detail-label"><i class="fas fa-folder"></i> Category</div>
+                    <div id="detail-category"></div>
+                </div>
+                <div class="event-detail-item">
+                    <div class="event-detail-label"><i class="fas fa-palette"></i> Color</div>
+                    <div id="detail-color"></div>
+                </div>
+                <div class="event-detail-item" id="description-container">
+                    <div class="event-detail-label"><i class="fas fa-align-left"></i> Description</div>
+                    <div class="event-detail-value" id="detail-description"></div>
+                </div>
+                <div class="event-details-actions">
+                    <button class="edit-event-btn" id="edit-from-details"><i class="fas fa-edit"></i> Edit Event</button>
+                    <button class="delete-event-btn" id="delete-from-details"><i class="fas fa-trash"></i> Delete Event</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="calender.js"></script>
+</body>
+</html>
