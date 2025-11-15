@@ -2,7 +2,7 @@
 
 A full-stack application with React frontend and Express/MongoDB backend for managing users.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js installed
@@ -24,7 +24,7 @@ npm run dev
 ```
 Frontend runs on `http://localhost:5173`
 
-## 📡 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -34,7 +34,7 @@ Frontend runs on `http://localhost:5173`
 | PUT | `/api/users/:id` | Update user |
 | DELETE | `/api/users/:id` | Delete user |
 
-## 📝 User Schema
+## User Schema
 ```json
 {
   "id": 1,
@@ -45,7 +45,7 @@ Frontend runs on `http://localhost:5173`
 }
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Frontend:** React + Vite
 - **Backend:** Express.js
 - **Database:** MongoDB + Mongoose
