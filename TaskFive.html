@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Comparison Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .dashboard h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .message-box {
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            text-align: center;
+        }
+
+        .storage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+        }
+
+        .info {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .storage-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #11998e;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .storage-card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .storage-icon {
+            font-size: 24px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .storage-card .form-group {
+            margin-bottom: 10px;
+        }
+
+        .storage-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .storage-info p {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .storage-info p:last-child {
+            margin-bottom: 0;
+        }
+
+        .storage-info strong {
+            color: #333;
+        }
+
+        .empty-storage {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .data-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #11998e;
+        }
+
+        .data-key {
+            font-weight: 600;
+            color: #11998e;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            color: #666;
+            word-break: break-word;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 1200px) {
+            .storage-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .storage-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard {
+                padding: 20px 10px;
+            }
+
+            .dashboard h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Storage Comparison Dashboard</h1>
+
+        <div id="statusMessage" class="message-box">
+            <p id="statusText"></p>
+        </div>
+
+        <!-- Storage Cards Grid -->
+            <div class="storage-grid">
+                <!-- localStorage Card -->
+                <div class="storage-card">
+                    <h2><span class="storage-icon"></span> localStorage</h2>
+                    <div class="input-section">
+                        <div class="form-group">
+                            <input type="text" id="localInput" placeholder="Enter a value">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="add-btn" onclick="addToLocalStorage()">Add</button>
+                        </div>
+                    </div>
+                    <div class="storage-info" id="localStorageData">
+                        <div class="empty-storage">No data stored</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="clear-btn" onclick="clearLocalStorage()">Clear</button>
+                    </div>
+                </div>
+
+                <!-- sessionStorage Card -->
+                <div class="storage-card">
+                    <h2><span class="storage-icon"></span> sessionStorage</h2>
+                    <div class="input-section">
+                        <div class="form-group">
+                            <input type="text" id="sessionInput" placeholder="Enter a value">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="add-btn" onclick="addToSessionStorage()">Add</button>
+                        </div>
+                    </div>
+                    <div class="storage-info" id="sessionStorageData">
+                        <div class="empty-storage">No data stored</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="clear-btn" onclick="clearSessionStorage()">Clear</button>
+                    </div>
+                </div>
+
+                <!-- IndexedDB Card -->
+                <div class="storage-card">
+                    <h2><span class="storage-icon"></span> IndexedDB</h2>
+                    <div class="input-section">
+                        <div class="form-group">
+                            <input type="text" id="indexedDBInput" placeholder="Enter a task">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="add-btn" onclick="addToIndexedDB()">Add</button>
+                        </div>
+                    </div>
+                    <div class="storage-info" id="indexedDBData">
+                        <div class="empty-storage">No data stored</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="clear-btn" onclick="clearIndexedDB()">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Control Buttons -->
+        <div class="button-group">
+            <button class="add-btn" onclick="loadAllStorage(true)">Refresh All Data</button>
+            <button class="clear-btn" onclick="clearAllStorage()">Clear All Storage</button>
+        </div>
+
+        <div class="info">
+            Add values to each storage type using the input fields above, or view data from Tasks 1-3!
+        </div>
+    </div>
+
+    <script>
+        let db;
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            initIndexedDB();
+            loadAllStorage();
+        });
+
+        // Initialize IndexedDB
+        function initIndexedDB() {
+            const request = indexedDB.open("TaskDB", 1);
+
+            request.onerror = function() {
+                console.error("IndexedDB initialization failed");
+            };
+
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                loadIndexedDBData();
+            };
+
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains("tasks")) {
+                    db.createObjectStore("tasks", { keyPath: "id", autoIncrement: true });
+                }
+            };
+        }
+
+        // Load all storage data
+        function loadAllStorage(showMessage = false) {
+            loadLocalStorageData();
+            loadSessionStorageData();
+            loadIndexedDBData();
+            if (showMessage) {
+                showStatus('All storage data refreshed!', true);
+            }
+        }
+
+        // Load localStorage data
+        function loadLocalStorageData() {
+            const container = document.getElementById('localStorageData');
+            const data = {};
+
+            // Get all localStorage items
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                data[key] = localStorage.getItem(key);
+            }
+
+            if (Object.keys(data).length === 0) {
+                container.innerHTML = '<div class="empty-storage">No data stored</div>';
+            } else {
+                let html = '';
+                for (const [key, value] of Object.entries(data)) {
+                    html += `
+                        <div class="data-item">
+                            <div class="data-key">${escapeHtml(key)}</div>
+                            <div class="data-value">${escapeHtml(value)}</div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        }
+
+        // Load sessionStorage data
+        function loadSessionStorageData() {
+            const container = document.getElementById('sessionStorageData');
+            const data = {};
+
+            // Get all sessionStorage items
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                data[key] = sessionStorage.getItem(key);
+            }
+
+            if (Object.keys(data).length === 0) {
+                container.innerHTML = '<div class="empty-storage">No data stored</div>';
+            } else {
+                let html = '';
+                for (const [key, value] of Object.entries(data)) {
+                    html += `
+                        <div class="data-item">
+                            <div class="data-key">${escapeHtml(key)}</div>
+                            <div class="data-value">${escapeHtml(value)}</div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        }
+
+        // Load IndexedDB data
+        function loadIndexedDBData() {
+            if (!db) {
+                setTimeout(loadIndexedDBData, 100);
+                return;
+            }
+
+            const container = document.getElementById('indexedDBData');
+
+            try {
+                const transaction = db.transaction(["tasks"], "readonly");
+                const objectStore = transaction.objectStore("tasks");
+                const request = objectStore.getAll();
+
+                request.onsuccess = function(event) {
+                    const tasks = event.target.result;
+
+                    if (tasks.length === 0) {
+                        container.innerHTML = '<div class="empty-storage">No data stored</div>';
+                    } else {
+                        let html = `<p><strong>Total Tasks:</strong> ${tasks.length}</p>`;
+                        tasks.forEach((task, index) => {
+                            html += `
+                                <div class="data-item">
+                                    <div class="data-key">Task #${task.id}</div>
+                                    <div class="data-value">${escapeHtml(task.text)} ${task.completed ? '✓' : ''}</div>
+                                </div>
+                            `;
+                        });
+                        container.innerHTML = html;
+                    }
+                };
+
+                request.onerror = function() {
+                    container.innerHTML = '<div class="empty-storage">Error loading data</div>';
+                };
+            } catch (error) {
+                container.innerHTML = '<div class="empty-storage">No IndexedDB database found</div>';
+            }
+        }
+
+        // Add to localStorage
+        function addToLocalStorage() {
+            const input = document.getElementById('localInput');
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('Please enter a value!');
+                return;
+            }
+
+            // Find the next available number
+            let counter = 1;
+            while (localStorage.getItem(`data_${counter}`) !== null) {
+                counter++;
+            }
+            const key = `data_${counter}`;
+            localStorage.setItem(key, value);
+
+            input.value = '';
+            loadLocalStorageData();
+            showStatus('Added to localStorage!', true);
+        }
+
+        // Clear localStorage
+        function clearLocalStorage() {
+            if (!confirm('Clear all localStorage data?')) return;
+            
+            localStorage.clear();
+            loadLocalStorageData();
+            showStatus('localStorage cleared!', true);
+        }
+
+        // Add to sessionStorage
+        function addToSessionStorage() {
+            const input = document.getElementById('sessionInput');
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('Please enter a value!');
+                return;
+            }
+
+            // Find the next available number
+            let counter = 1;
+            while (sessionStorage.getItem(`data_${counter}`) !== null) {
+                counter++;
+            }
+            const key = `data_${counter}`;
+            sessionStorage.setItem(key, value);
+
+            input.value = '';
+            loadSessionStorageData();
+            showStatus('Added to sessionStorage!', true);
+        }
+
+        // Clear sessionStorage
+        function clearSessionStorage() {
+            if (!confirm('Clear all sessionStorage data?')) return;
+            
+            sessionStorage.clear();
+            loadSessionStorageData();
+            showStatus('sessionStorage cleared!', true);
+        }
+
+        // Add to IndexedDB
+        function addToIndexedDB() {
+            const input = document.getElementById('indexedDBInput');
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('Please enter a task!');
+                return;
+            }
+
+            if (!db) {
+                showStatus('IndexedDB not initialized!', false);
+                return;
+            }
+
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+
+            const task = {
+                text: value,
+                completed: false,
+                timestamp: new Date().toISOString()
+            };
+
+            const request = objectStore.add(task);
+
+            request.onsuccess = function() {
+                input.value = '';
+                loadIndexedDBData();
+                showStatus('Added to IndexedDB!', true);
+            };
+
+            request.onerror = function() {
+                showStatus('Error adding to IndexedDB!', false);
+            };
+        }
+
+        // Clear IndexedDB
+        function clearIndexedDB() {
+            if (!confirm('Clear all IndexedDB data?')) return;
+
+            if (!db) {
+                showStatus('IndexedDB not initialized!', false);
+                return;
+            }
+
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.clear();
+
+            request.onsuccess = function() {
+                loadIndexedDBData();
+                showStatus('IndexedDB cleared!', true);
+            };
+
+            request.onerror = function() {
+                showStatus('Error clearing IndexedDB!', false);
+            };
+        }
+
+        // Clear all storage
+        function clearAllStorage() {
+            if (!confirm('Are you sure you want to clear ALL storage data from all three APIs? This cannot be undone!')) {
+                return;
+            }
+
+            // Clear localStorage
+            localStorage.clear();
+
+            // Clear sessionStorage
+            sessionStorage.clear();
+
+            // Clear IndexedDB
+            if (db) {
+                const transaction = db.transaction(["tasks"], "readwrite");
+                const objectStore = transaction.objectStore("tasks");
+                objectStore.clear();
+            }
+
+            // Reload all displays
+            loadAllStorage();
+            showStatus('All storage cleared successfully!', true);
+        }
+
+        // Show status message
+        function showStatus(message, isSuccess) {
+            const statusMessage = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = message;
+            statusMessage.className = isSuccess ? 'message-box success-message show' : 'message-box error-message show';
+            
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Demo - Cache API</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="offline-demo.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cache API Demo</h1>
+        
+        <div id="statusMessage" class="message-box">
+            <p id="statusText"></p>
+        </div>
+
+        <div class="info-card">
+            <h2>Service Worker Status</h2>
+            <div id="swStatus" class="status-display">
+                <p><strong>Status:</strong> <span id="swState">Checking...</span></p>
+                <p><strong>Network:</strong> <span id="networkStatus">Online</span></p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>What's Cached?</h2>
+            <ul class="cached-list" id="cachedFiles">
+                <li>TaskFour.html</li>
+                <li>styles.css</li>
+                <li>offline-demo.css</li>
+                <li>sw.js (Service Worker)</li>
+            </ul>
+        </div>
+
+        <div class="button-group">
+            <button class="add-btn" onclick="checkCache()">Check Cache</button>
+            <button class="clear-btn" onclick="clearCache()">Clear Cache</button>
+        </div>
+
+        <div class="info">
+            This page uses the <strong>Cache API</strong> and <strong>Service Workers</strong> to work offline. All static assets are cached and served even without internet connection!
+        </div>
+    </div>
+
+    <script>
+        // Check if service workers are supported
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                registerServiceWorker();
+            });
+        } else {
+            showStatus('Service Workers not supported in this browser!', false);
+            document.getElementById('swState').textContent = 'Not Supported';
+        }
+
+        async function registerServiceWorker() {
+            try {
+                const registration = await navigator.serviceWorker.register('./sw.js');
+                console.log('Service Worker registered successfully:', registration);
+                
+                // Update status based on service worker state
+                if (registration.installing) {
+                    updateSWStatus('Installing...');
+                } else if (registration.waiting) {
+                    updateSWStatus('Waiting');
+                } else if (registration.active) {
+                    updateSWStatus('Active');
+                    showStatus('Service Worker is active! This page will work offline.', true);
+                }
+
+                // Listen for service worker updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        updateSWStatus(newWorker.state);
+                    });
+                });
+
+            } catch (error) {
+                console.error('Service Worker registration failed:', error);
+                showStatus('Failed to register Service Worker: ' + error.message, false);
+                updateSWStatus('Failed ✗');
+            }
+        }
+
+        function updateSWStatus(state) {
+            const stateElement = document.getElementById('swState');
+            stateElement.textContent = state;
+            
+            if (state === 'Active' || state === 'activated') {
+                stateElement.style.color = '#38ef7d';
+            } else if (state === 'Failed') {
+                stateElement.style.color = '#ff6b6b';
+            }
+        }
+
+        // Monitor online/offline status
+        window.addEventListener('online', () => {
+            document.getElementById('networkStatus').textContent = 'Online';
+            document.getElementById('networkStatus').style.color = '#38ef7d';
+            showStatus('You are back online!', true);
+        });
+
+        window.addEventListener('offline', () => {
+            document.getElementById('networkStatus').textContent = 'Offline';
+            document.getElementById('networkStatus').style.color = '#ff6b6b';
+            showStatus('You are offline - but the page still works!', true);
+        });
+
+        // Set initial network status
+        if (navigator.onLine) {
+            document.getElementById('networkStatus').textContent = 'Online';
+            document.getElementById('networkStatus').style.color = '#38ef7d';
+        } else {
+            document.getElementById('networkStatus').textContent = 'Offline';
+            document.getElementById('networkStatus').style.color = '#ff6b6b';
+        }
+
+        async function checkCache() {
+            try {
+                const cacheNames = await caches.keys();
+                const cache = await caches.open('offline-cache-v1');
+                const cachedRequests = await cache.keys();
+                
+                console.log('Cache names:', cacheNames);
+                console.log('Cached files:', cachedRequests.map(req => req.url));
+                
+                showStatus(`Cache contains ${cachedRequests.length} files. Check console for details.`, true);
+            } catch (error) {
+                console.error('Error checking cache:', error);
+                showStatus('Error checking cache: ' + error.message, false);
+            }
+        }
+
+        async function clearCache() {
+            if (!confirm('Are you sure you want to clear the cache? The page may not work offline until you reload.')) {
+                return;
+            }
+
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                
+                // Unregister service worker
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(reg => reg.unregister()));
+                
+                showStatus('Cache cleared! Reload the page to re-register the service worker.', true);
+                updateSWStatus('Cleared');
+            } catch (error) {
+                console.error('Error clearing cache:', error);
+                showStatus('Error clearing cache: ' + error.message, false);
+            }
+        }
+
+        function showStatus(message, isSuccess) {
+            const statusMessage = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = message;
+            statusMessage.className = isSuccess ? 'message-box success-message show' : 'message-box error-message show';
+            
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

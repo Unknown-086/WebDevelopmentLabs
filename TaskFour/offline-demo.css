@@ -1,0 +1,83 @@
+/* Offline Demo Specific Styles */
+
+.info-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 4px solid #11998e;
+}
+
+.info-card h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+.status-display {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.status-display p {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #555;
+}
+
+.status-display p:last-child {
+    margin-bottom: 0;
+}
+
+.status-display strong {
+    color: #333;
+}
+
+.test-steps {
+    margin-left: 20px;
+    line-height: 1.8;
+    color: #555;
+}
+
+.test-steps li {
+    margin-bottom: 10px;
+}
+
+.test-steps strong {
+    color: #11998e;
+}
+
+.cached-list {
+    list-style: none;
+    padding: 0;
+}
+
+.cached-list li {
+    padding: 10px 15px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    color: #555;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.cached-list li:before {
+    content: '• ';
+    color: #11998e;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Status colors */
+#swState,
+#networkStatus {
+    font-weight: bold;
+}
+
+/* Animation for status changes */
+.status-display span {
+    transition: color 0.3s ease;
+}

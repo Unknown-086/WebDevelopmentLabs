@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Preferences</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>User Preferences</h1>
+        
+        <div id="welcomeMessage" class="welcome-message">
+            <p>Welcome back, <span id="userName"></span>!</p>
+        </div>
+
+        <div class="form-group">
+            <label for="nameInput">Your Name:</label>
+            <input type="text" id="nameInput" placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+            <label for="colorPicker">Theme Color:</label>
+            <input type="color" id="colorPicker">
+        </div>
+
+        <div class="button-group">
+            <button class="save-btn" onclick="savePreferences()">Save Preferences</button>
+            <button class="clear-btn" onclick="clearData()">Clear Data</button>
+        </div>
+
+        <div class="info">
+            Your preferences are stored locally and will persist after page reload.
+        </div>
+    </div>
+
+    <script>
+        // Set initial color picker value from localStorage or default to white
+        document.getElementById('colorPicker').value = localStorage.getItem('themeColor') || '#ffffff';
+
+        // Load saved preferences on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadPreferences();
+        });
+
+        function savePreferences() {
+            const name = document.getElementById('nameInput').value.trim();
+            const color = document.getElementById('colorPicker').value;
+
+            // Store color (always save)
+            localStorage.setItem('themeColor', color);
+            
+            // Store name only if provided
+            if (name) {
+                localStorage.setItem('userName', name);
+            }
+
+            // Apply the preferences immediately
+            applyPreferences(name, color);
+
+            // Show success message
+            alert('Preferences saved successfully!');
+        }
+
+        function loadPreferences() {
+            // Retrieve values from localStorage
+            const savedName = localStorage.getItem('userName');
+            const savedColor = localStorage.getItem('themeColor');
+
+            // Apply saved color if exists, otherwise use default white
+            const colorToApply = savedColor || 'white';
+            const nameToApply = savedName || '';
+            
+            applyPreferences(nameToApply, colorToApply);
+            
+            // Pre-fill the form with saved values
+            if (savedName) {
+                document.getElementById('nameInput').value = savedName;
+            }
+            if (savedColor) {
+                document.getElementById('colorPicker').value = savedColor;
+            }
+        }
+
+        function applyPreferences(name, color) {
+            // Apply background color
+            document.body.style.backgroundColor = color;
+
+            // Display welcome message only if name exists
+            if (name) {
+                document.getElementById('userName').textContent = name;
+                document.getElementById('welcomeMessage').classList.add('show');
+            } else {
+                document.getElementById('welcomeMessage').classList.remove('show');
+            }
+        }
+
+        function clearData() {
+            // Confirm before clearing
+            if (confirm('Are you sure you want to clear all saved preferences?')) {
+                // Remove data from localStorage
+                localStorage.removeItem('userName');
+                localStorage.removeItem('themeColor');
+
+                // Reset the page
+                document.body.style.backgroundColor = 'white';
+                document.getElementById('welcomeMessage').classList.remove('show');
+                document.getElementById('nameInput').value = '';
+                document.getElementById('colorPicker').value = '#ffffff';
+
+                alert('All data cleared successfully!');
+            }
+        }
+    </script>
+</body>
+</html>

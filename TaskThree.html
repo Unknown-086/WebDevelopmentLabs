@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Task Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Task Manager</h1>
+        
+        <div id="statusMessage" class="message-box success-message">
+            <p id="statusText"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="taskInput">New Task:</label>
+            <input type="text" id="taskInput" placeholder="Enter your task here..." onkeypress="handleKeyPress(event)">
+        </div>
+
+        <div class="button-group">
+            <button class="add-btn" onclick="addTask()">Add Task</button>
+            <button class="clear-btn" onclick="deleteAllTasks()">Delete All</button>
+        </div>
+
+        <div class="info">
+            Tasks are stored in <strong>IndexedDB</strong> - a powerful client-side database that persists even after closing the browser!
+        </div>
+
+        <div class="task-list" id="taskList">
+            <div class="empty-state">
+                No tasks yet. Add your first task above!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db;
+
+        // Initialize IndexedDB on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            initDB();
+        });
+
+        // Initialize IndexedDB
+        function initDB() {
+            const request = indexedDB.open("TaskDB", 1);
+
+            request.onerror = function(event) {
+                console.error("Database error:", event.target.error);
+                showStatus("Error opening database!", false);
+            };
+
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                console.log("Database opened successfully");
+                loadTasks();
+            };
+
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                
+                // Create object store if it doesn't exist
+                if (!db.objectStoreNames.contains("tasks")) {
+                    const objectStore = db.createObjectStore("tasks", { keyPath: "id", autoIncrement: true });
+                    objectStore.createIndex("completed", "completed", { unique: false });
+                    objectStore.createIndex("timestamp", "timestamp", { unique: false });
+                    console.log("Object store created");
+                }
+            };
+        }
+
+        // Add a new task
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskText = taskInput.value.trim();
+
+            if (!taskText) {
+                alert('Please enter a task!');
+                return;
+            }
+
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+
+            const task = {
+                text: taskText,
+                completed: false,
+                timestamp: new Date().toISOString()
+            };
+
+            const request = objectStore.add(task);
+
+            request.onsuccess = function() {
+                console.log("Task added successfully");
+                taskInput.value = '';
+                loadTasks();
+                showStatus(`Task added: "${taskText}"`, true);
+            };
+
+            request.onerror = function() {
+                console.error("Error adding task");
+                showStatus("Error adding task!", false);
+            };
+        }
+
+        // Load all tasks from IndexedDB
+        function loadTasks() {
+            const transaction = db.transaction(["tasks"], "readonly");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.getAll();
+
+            request.onsuccess = function(event) {
+                const tasks = event.target.result;
+                displayTasks(tasks);
+            };
+
+            request.onerror = function() {
+                console.error("Error loading tasks");
+            };
+        }
+
+        // Display tasks in the UI
+        function displayTasks(tasks) {
+            const taskList = document.getElementById('taskList');
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state">No tasks yet. Add your first task above!</div>';
+                return;
+            }
+
+            const completedCount = tasks.filter(t => t.completed).length;
+            const totalCount = tasks.length;
+
+            let html = `<div class="task-count">${completedCount} / ${totalCount} completed</div>`;
+
+            tasks.forEach(task => {
+                html += `
+                    <div class="task-item ${task.completed ? 'completed' : ''}">
+                        <div class="task-content">
+                            <input type="checkbox" 
+                                   class="task-checkbox" 
+                                   ${task.completed ? 'checked' : ''} 
+                                   onchange="toggleTask(${task.id})">
+                            <span class="task-text">${escapeHtml(task.text)}</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="delete-task-btn" onclick="deleteTask(${task.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            taskList.innerHTML = html;
+        }
+
+        // Toggle task completion status
+        function toggleTask(taskId) {
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.get(taskId);
+
+            request.onsuccess = function(event) {
+                const task = event.target.result;
+                task.completed = !task.completed;
+
+                const updateRequest = objectStore.put(task);
+
+                updateRequest.onsuccess = function() {
+                    console.log("Task updated successfully");
+                    loadTasks();
+                    showStatus(task.completed ? "Task marked as completed!" : "Task marked as incomplete", true);
+                };
+
+                updateRequest.onerror = function() {
+                    console.error("Error updating task");
+                    showStatus("Error updating task!", false);
+                };
+            };
+
+            request.onerror = function() {
+                console.error("Error retrieving task");
+            };
+        }
+
+        // Delete a specific task
+        function deleteTask(taskId) {
+            if (!confirm('Are you sure you want to delete this task?')) {
+                return;
+            }
+
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.delete(taskId);
+
+            request.onsuccess = function() {
+                console.log("Task deleted successfully");
+                loadTasks();
+                showStatus("Task deleted successfully!", true);
+            };
+
+            request.onerror = function() {
+                console.error("Error deleting task");
+                showStatus("Error deleting task!", false);
+            };
+        }
+
+        // Delete all tasks
+        function deleteAllTasks() {
+            if (!confirm('Are you sure you want to delete ALL tasks? This cannot be undone!')) {
+                return;
+            }
+
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.clear();
+
+            request.onsuccess = function() {
+                console.log("All tasks deleted successfully");
+                loadTasks();
+                showStatus("All tasks deleted!", true);
+            };
+
+            request.onerror = function() {
+                console.error("Error deleting all tasks");
+                showStatus("Error deleting tasks!", false);
+            };
+        }
+
+        // Show status message
+        function showStatus(message, isSuccess) {
+            const statusMessage = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = message;
+            statusMessage.className = isSuccess ? 'message-box success-message show' : 'message-box error-message show';
+            
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle Enter key press in input field
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

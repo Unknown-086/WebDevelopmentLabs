@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Session Demo</h1>
+        
+        <div id="quoteDisplay" class="message-box success-message">
+            <p>Your saved quote:</p>
+            <p id="savedQuote" style="font-style: italic; margin-top: 10px;"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="quoteInput">Your Favorite Quote:</label>
+            <textarea id="quoteInput" placeholder="Enter your favorite quote here..." rows="4"></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="add-btn" onclick="saveQuote()">Save Quote</button>
+            <button class="clear-btn" onclick="clearQuote()">Clear Quote</button>
+        </div>
+
+        <div class="info">
+            This data is stored in <strong>sessionStorage</strong> and will persist only while this tab is open. Close the tab and the data will be lost!
+        </div>
+    </div>
+
+    <script>
+        // Load saved quote on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadQuote();
+        });
+
+        function saveQuote() {
+            const quote = document.getElementById('quoteInput').value.trim();
+
+            // Validate input
+            if (!quote) {
+                alert('Please enter a quote before saving!');
+                return;
+            }
+
+            // Store quote in sessionStorage
+            sessionStorage.setItem('quote', quote);
+
+            // Display the saved quote
+            displaySavedQuote(quote);
+
+            // Show success message
+            alert('Quote saved successfully!\n');
+        }
+
+        function loadQuote() {
+            // Retrieve quote from sessionStorage
+            const savedQuote = sessionStorage.getItem('quote');
+
+            // If quote exists, display it
+            if (savedQuote) {
+                displaySavedQuote(savedQuote);
+                // Pre-fill the textarea with saved quote
+                document.getElementById('quoteInput').value = savedQuote;
+            } else {
+                // Hide the display box if no quote is saved
+                document.getElementById('quoteDisplay').classList.remove('show');
+            }
+        }
+
+        function displaySavedQuote(quote) {
+            // Display the saved quote
+            document.getElementById('savedQuote').textContent = `"${quote}"`;
+            document.getElementById('quoteDisplay').classList.add('show');
+        }
+
+        function clearQuote() {
+            // Confirm before clearing
+            if (confirm('Are you sure you want to clear your saved quote?')) {
+                // Remove quote from sessionStorage
+                sessionStorage.removeItem('quote');
+
+                // Clear the display and textarea
+                document.getElementById('quoteDisplay').classList.remove('show');
+                document.getElementById('quoteInput').value = '';
+                document.getElementById('savedQuote').textContent = '';
+
+                alert('Quote cleared successfully!');
+            }
+        }
+    </script>
+</body>
+</html>
