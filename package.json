@@ -22,7 +22,9 @@
   "homepage": "https://github.com/Unknown-086/WebDevelopmentLabs#readme",
   "devDependencies": {
     "nodemon": "^3.1.11"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "express": "^5.1.0"
   }
 }
-
-

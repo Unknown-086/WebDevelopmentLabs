@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
                     <p>Current time: ${new Date().toLocaleString()}</p>
                     <h3>Try these routes:</h3>
                     <ul>
-                        <li><a href="/">/ (Home - you are here)</a></li>
+                        <li><a href="/">/(Home - you are here)</a></li>
                         <li><a href="/about">/about</a></li>
                         <li><a href="/json">/json (returns JSON)</a></li>
                         <li><a href="/api/users">/api/users (returns JSON data)</a></li>
@@ -98,7 +98,7 @@ const server = http.createServer((req, res) => {
             <body style="font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px;">
                 <h1>About This Server</h1>
                 <p>This is a basic HTTP server built with Node.js for Lab 10, Task 7.</p>
-                <p><a href="/">← Back to Home</a></p>
+                <p><a href="/">Back to Home</a></p>
             </body>
             </html>
         `);
@@ -141,43 +141,6 @@ server.listen(PORT, HOST, () => {
     console.log(`=== TASK 7: HTTP Server ===`);
     console.log(`Server running at http://${HOST}:${PORT}/`);
     console.log(`Press Ctrl+C to stop the server\n`);
+
+
 });
-
-/* ============================================
-   QUESTIONS & ANSWERS:
-   ============================================
-
-Q1: How would you return JSON instead of text?
-Answer:
-- Set the Content-Type header to 'application/json'
-- Convert your JavaScript object to JSON string using JSON.stringify()
-- Example:
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Hello', status: 200 }));
-- See the /json and /api/users routes above for working examples
-
-Q2: How would you extend this to serve actual HTML files?
-Answer:
-- Use the 'fs' module to read HTML files from the file system
-- Example approach:
-    const fs = require('fs');
-    const path = require('path');
-    
-    if (pathname === '/page') {
-        const filePath = path.join(__dirname, 'public', 'page.html');
-        fs.readFile(filePath, 'utf-8', (err, data) => {
-            if (err) {
-                res.statusCode = 500;
-                res.end('Error loading page');
-            } else {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/html');
-                res.end(data);
-            }
-        });
-    }
-- Create a 'public' folder to store your HTML files
-- Use path.extname() to determine content type for CSS, JS, images, etc.
-- For production apps, use Express.js which has built-in static file serving
-
-============================================ */
