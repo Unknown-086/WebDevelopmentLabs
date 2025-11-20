@@ -1,0 +1,28 @@
+{
+  "name": "labten",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-2": "node src/task2-main.js",
+    "dev-2": "nodemon src/task2-main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Unknown-086/WebDevelopmentLabs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Unknown-086/WebDevelopmentLabs/issues"
+  },
+  "homepage": "https://github.com/Unknown-086/WebDevelopmentLabs#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
+
+
