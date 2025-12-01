@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/errorHandler');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -35,6 +36,9 @@ app.post('/test', (req, res) => res.json(req.body));
 app.get('/protected', authMiddleware, (req, res) => {
   res.json({ message: 'Access granted', user: req.user });
 });
+
+// API Routes
+app.use('/api/users', userRoutes);
 
 // Centralized error handler (must be last middleware)
 app.use(errorHandler);
