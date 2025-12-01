@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/errorHandler');
 const userRoutes = require('./routes/userRoutes');
+const postRoutes = require('./routes/postRoutes');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get('/protected', authMiddleware, (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
 // Centralized error handler (must be last middleware)
 app.use(errorHandler);
