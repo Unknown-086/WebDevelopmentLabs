@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRole } from '../../context/RoleContext';
 import { Card } from '../ui/Card';
@@ -45,6 +45,7 @@ export const BookDashboard = () => {
   const [newBook, setNewBook] = useState({ title: '', author: '' });
   const [editingBook, setEditingBook] = useState(null);
   const [editingProfile, setEditingProfile] = useState(DEFAULT_USER);
+  const isInitialMount = useRef(true);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -61,6 +62,7 @@ export const BookDashboard = () => {
     if (savedUser) {
       setUserProfile(JSON.parse(savedUser));
     } else {
+      setUserProfile(DEFAULT_USER);
       localStorage.setItem('userProfile', JSON.stringify(DEFAULT_USER));
     }
   }, []);
@@ -72,8 +74,12 @@ export const BookDashboard = () => {
     }
   }, [books]);
 
-  // Save user profile to localStorage whenever it changes
+  // Save user profile to localStorage whenever it changes (skip initial mount)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     localStorage.setItem('userProfile', JSON.stringify(userProfile));
   }, [userProfile]);
 
@@ -367,7 +373,6 @@ export const BookDashboard = () => {
           />
           <div className="flex gap-3 pt-4">
             <Button onClick={handleAddBook} variant="shimmer" className="flex-1">
-              <Plus className="w-4 h-4 mr-2" />
               Add Book
             </Button>
             <Button onClick={() => setIsAddModalOpen(false)} variant="outline" className="flex-1">
